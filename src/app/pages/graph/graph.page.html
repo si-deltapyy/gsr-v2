@@ -1,9 +1,18 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Graph</ion-title>
+    <ion-icon slot='end' name="play-outline" (click)='onStart()'></ion-icon>
+    <ion-icon slot='end' name="stop-outline" (click)='onStop()'></ion-icon>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <canvas baseChart 
+  [datasets]="chartData" 
+  [labels]="chartLabels" 
+  [options]="chartOptions" 
+  [colors]="chartColors"
+  [legend]="showLegend" 
+  [chartType]="chartType">
+  </canvas>
 </ion-content>
