@@ -5,5 +5,44 @@
 </ion-header>
 
 <ion-content>
-
+  <ion-card>
+    <ion-card-header>Select service characteristic to plot</ion-card-header>
+  <ion-list>
+    <ion-item>
+      <ion-label>Services</ion-label>
+      <ion-select interface="popover">
+        <ion-select-option value="service1">Service 1</ion-select-option>
+        <ion-select-option value="service2">Service 2</ion-select-option>
+        <ion-select-option value="service3">Service 3</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Characteristic</ion-label>
+      <ion-select interface="popover">
+        <ion-select-option value="characteristic1">Characteristic 1</ion-select-option>
+        <ion-select-option value="characteristic2">Characteristic 2</ion-select-option>
+        <ion-select-option value="characteristic3">Characteristic 3</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+  </ion-card>
+  
+  <ion-card>
+    <ion-card-header>
+      Name
+    </ion-card-header>
+    <ion-card-content>
+      ID
+    </ion-card-content>
+  </ion-card>
+  
+  
+  <ion-card>
+    <ion-card-header>
+      Details
+    </ion-card-header>
+    <ion-card-content>
+      <pre>{{peripheral | json }}</pre>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

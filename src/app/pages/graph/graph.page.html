@@ -1,18 +1,27 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Graph</ion-title>
-    <ion-icon slot='end' name="play-outline" (click)='onStart()'></ion-icon>
-    <ion-icon slot='end' name="stop-outline" (click)='onStop()'></ion-icon>
+    <div class='toolbar'>
+    <ion-title>Graph</ion-title>    
+    <ion-icon name="play-circle-outline" (click)='onStart()'></ion-icon>
+    <ion-icon name="stop-circle-outline" (click)='onStop()'></ion-icon>
+    <ion-icon name="information-circle-outline"></ion-icon>
+    <ion-icon *ngIf="state == 'connected'"  src="/assets/bluetooth_connected-24px.svg"></ion-icon>
+    <ion-icon *ngIf="state == 'disconnected'"  src="/assets/bluetooth-24px.svg"></ion-icon>
+    <ion-icon *ngIf="state == 'scannning'"  src="/assets/bluetooth_scanning-24px.svg"></ion-icon>
+    <ion-icon *ngIf="state == 'disabled'"  src="/assets/bluetooth_disabled-24px.svg"></ion-icon>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <canvas baseChart 
-  [datasets]="chartData" 
-  [labels]="chartLabels" 
-  [options]="chartOptions" 
-  [colors]="chartColors"
-  [legend]="showLegend" 
-  [chartType]="chartType">
-  </canvas>
+  <div class='chart'>
+    <canvas baseChart 
+    [datasets]="chartData" 
+    [labels]="chartLabels" 
+    [options]="chartOptions" 
+    [colors]="chartColors"
+    [legend]="showLegend" 
+    [chartType]="chartType">
+    </canvas>
+  </div>  
 </ion-content>

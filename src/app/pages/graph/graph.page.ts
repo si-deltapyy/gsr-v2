@@ -9,6 +9,9 @@ import { LinearSpace } from 'src/app/models/LinearSpace';
   styleUrls: ['./graph.page.scss'],
 })
 export class GraphPage implements OnInit {
+
+  private state: string = "disabled"
+
 /* Signal properties */
   private samplingFreq: number = 1000;
   
