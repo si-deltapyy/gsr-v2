@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BleDevice } from 'src/app/models/BleDevice';
 import { BleService } from 'src/app/services/ble.service';
 
 @Component({
@@ -10,9 +9,9 @@ import { BleService } from 'src/app/services/ble.service';
 })
 export class BluetoothPage implements OnInit {
   private state = "disabled";
-  public devices: BleDevice[] = [];
+  public devices = {};
   constructor(private bleSrv: BleService, private router: Router) {
-    this.bleSrv.getObservableList().subscribe({ next: list => { this.devices = list; }})
+    this.devices = this.bleSrv.getObservableList();
   }
 
   ngOnInit() {

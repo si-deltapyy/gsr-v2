@@ -9,9 +9,9 @@
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let device of devices">
-      <ion-label>{{device.name.toUpperCase() || 'N/A'}}</ion-label>
-      <ion-label>{{device.id.toUpperCase()}}</ion-label>
+    <ion-item *ngFor="let device of devices | async">
+      <ion-label>{{device.name || "n/a"}}</ion-label>
+      <ion-label>{{device.id}}</ion-label>
       <ion-label>RSSI: {{device.rssi}}</ion-label>
       <ion-button color="success" (click)="onDeviceSelected(device)" shape="round">
         Connect

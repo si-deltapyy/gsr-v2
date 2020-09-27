@@ -1,12 +1,13 @@
+import { BleAdvertisingPacket } from './BleAdvertisingPacket';
 import { BleCharacteristic } from './BleCharacteristic';
 
-export class BleDevice {
-  private name: string;
-  private id: string;
-  private advertising: ArrayBuffer;
-  private rssi: number;
-  public services: string[];
-  public characteristics: BleCharacteristic[];
+export class BleDevice implements BleAdvertisingPacket {
+  name: string;
+  id: string;
+  advertising: ArrayBuffer;
+  rssi: number;
+  services: string[];
+  characteristics: BleCharacteristic[];
 
 
 
@@ -17,9 +18,5 @@ export class BleDevice {
     this.rssi = 0;    
     this.services = [];
     this.characteristics = [];
-  }
-
-  getId() {
-    return this.id;
   }
 }

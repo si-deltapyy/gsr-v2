@@ -62,12 +62,16 @@ export class GraphPage implements OnInit {
 
   private chartColors: Color[] = [
     {
-      borderColor: '#ffffff',
+      borderColor: '#174DF0',
       backgroundColor: '#ff00ff'
     },
     {
-      borderColor: '#ffffff',
+      borderColor: '#174DF0',
       backgroundColor: '#ff00ff'
+    },
+    {
+      borderColor: '#ff0000',
+      backgroundColor: '#ff0000',
     }
   ];
 
