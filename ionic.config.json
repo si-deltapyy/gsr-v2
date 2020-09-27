@@ -1,5 +1,7 @@
 {
   "name": "ble_graph",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }

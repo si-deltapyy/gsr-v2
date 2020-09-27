@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { BleDevice } from 'src/app/models/BleDevice';
+import { BleService } from 'src/app/services/ble.service';
 
 @Component({
   selector: 'app-bluetooth',
@@ -7,13 +10,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BluetoothPage implements OnInit {
   private state = "disabled";
-  public devices: any[] = [
-    { name: "Mock Device 1", id: "5f:a4:33:00:ef:b1", rssi: -37 },
-    { name: "Mock Device 2", id: "5f:a5:33:11:ef:b1", rssi: -20 }
-  ];
-  constructor() { }
+  public devices: BleDevice[] = [];
+  constructor(private bleSrv: BleService, private router: Router) {
+    this.bleSrv.getObservableList().subscribe({ next: list => { this.devices = list; }})
+  }
 
   ngOnInit() {
   }
 
+  scan() {
+    this.bleSrv.scan(20);
+  }
+
+  onDeviceSelected(device) {
+    this.router.navigate(['/settings',device.id]);
+  }
 }

@@ -11,17 +11,13 @@
     <ion-item>
       <ion-label>Services</ion-label>
       <ion-select interface="popover">
-        <ion-select-option value="service1">Service 1</ion-select-option>
-        <ion-select-option value="service2">Service 2</ion-select-option>
-        <ion-select-option value="service3">Service 3</ion-select-option>
+        <ion-select-option *ngFor="let service of device.services" value="service">{{service}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label>Characteristic</ion-label>
       <ion-select interface="popover">
-        <ion-select-option value="characteristic1">Characteristic 1</ion-select-option>
-        <ion-select-option value="characteristic2">Characteristic 2</ion-select-option>
-        <ion-select-option value="characteristic3">Characteristic 3</ion-select-option>
+        <ion-select-option *ngFor="let each of device.characteristics" value="each.characteristic">{{each.characteristic}}</ion-select-option>
       </ion-select>
     </ion-item>
   </ion-list>
@@ -29,10 +25,10 @@
   
   <ion-card>
     <ion-card-header>
-      Name
+      Name: {{device.name}}
     </ion-card-header>
     <ion-card-content>
-      ID
+      ID: {{device.id}}
     </ion-card-content>
   </ion-card>
   
@@ -42,7 +38,7 @@
       Details
     </ion-card-header>
     <ion-card-content>
-      <pre>{{peripheral | json }}</pre>
+      <pre>{{device | json }}</pre>
     </ion-card-content>
   </ion-card>
 </ion-content>

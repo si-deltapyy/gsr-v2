@@ -8,6 +8,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { BleService } from './services/ble.service';
+import { BLE } from '@ionic-native/ble/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,7 +22,8 @@ import { AppRoutingModule } from './app-routing.module';
   providers: [
     StatusBar,
     SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    BLE
   ],
   bootstrap: [AppComponent]
 })

@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { SettingsPageModule } from './pages/settings/settings.module';
+import { SettingsPage } from './pages/settings/settings.page';
 
 const routes: Routes = [
   {
@@ -18,7 +20,10 @@ const routes: Routes = [
   {
     path: 'pages/settings',
     loadChildren: () => import('./pages/settings/settings.module').then( m => m.SettingsPageModule)
-  }
+  },
+  {
+    path: 'settings/:id',
+    loadChildren: () => import('./pages/settings/settings.module').then( m => m.SettingsPageModule)  }
 ];
 
 @NgModule({
