@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -23,9 +23,9 @@ export class AppComponent implements OnInit {
       icon: 'bluetooth'
     },
     {
-      title: 'Settings',
-      url: '/pages/settings',
-      icon: 'settings'
+      title: 'Info',
+      url: '/pages/info',
+      icon: 'information-circle'
     }  
   ];
  

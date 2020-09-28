@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Info</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      Name: {{device.name}}
+    </ion-card-header>
+    <ion-card-content>
+      ID: {{device.id}}
+    </ion-card-content>
+  </ion-card>
+  
+  
+  <ion-card>
+    <ion-card-header>
+      Details
+    </ion-card-header>
+    <ion-card-content>
+      <pre>{{device | json }}</pre>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

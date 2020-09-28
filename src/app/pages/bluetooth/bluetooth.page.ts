@@ -1,5 +1,6 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, EventEmitter, NgZone, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { AppComponent } from 'src/app/app.component';
 import { BleService } from 'src/app/services/ble.service';
 
 @Component({
@@ -8,20 +9,31 @@ import { BleService } from 'src/app/services/ble.service';
   styleUrls: ['./bluetooth.page.scss'],
 })
 export class BluetoothPage implements OnInit {
-  private state = "disabled";
   public devices = {};
-  constructor(private bleSrv: BleService, private router: Router) {
+  private status: string = "disabled";
+  constructor(private bleSrv: BleService, private router: Router,private appComponent: AppComponent) {
     this.devices = this.bleSrv.getObservableList();
+    this.bleSrv.getObservableStatus().subscribe((status) => {
+      this.status = status;
+    });
+    this.bleSrv.UpdateStatus();
   }
 
   ngOnInit() {
   }
 
   scan() {
-    this.bleSrv.scan(20);
+    this.bleSrv.scan(10);
   }
 
-  onDeviceSelected(device) {
-    this.router.navigate(['/settings',device.id]);
+  connect(id: string) {
+    this.bleSrv.stopScan();
+    this.bleSrv.connect(id);
+    this.appComponent.selectedIndex = 0; //update menu index. IMPROVE ME
+    this.router.navigate(['pages/graph']);
+  }
+
+  onBluetoothDisabled() {
+    alert("Enable Bluetooth");
   }
 }

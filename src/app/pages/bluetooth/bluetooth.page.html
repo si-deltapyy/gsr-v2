@@ -1,7 +1,15 @@
 <ion-header>
   <ion-toolbar>
     <div class='toolbar'>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
       <ion-title>Bluetooth</ion-title>
+      <ion-icon *ngIf="status == 'connected'" src="/assets/bluetooth_connected-24px.svg"></ion-icon>
+      <ion-icon *ngIf="status == 'disconnected'" src="/assets/bluetooth-24px.svg"></ion-icon>
+      <ion-icon *ngIf="status == 'scanning'"  src="/assets/bluetooth_scanning-24px.svg"></ion-icon>
+      <ion-icon *ngIf="status == 'disabled'"  (click)='onBluetoothDisabled()' src="/assets/bluetooth_disabled-24px.svg"></ion-icon>     
+
       <ion-icon name="search-circle-outline" (click) = "scan()"></ion-icon>
     </div>
   </ion-toolbar>
@@ -13,9 +21,9 @@
       <ion-label>{{device.name || "n/a"}}</ion-label>
       <ion-label>{{device.id}}</ion-label>
       <ion-label>RSSI: {{device.rssi}}</ion-label>
-      <ion-button color="success" (click)="onDeviceSelected(device)" shape="round">
+      <ion-button color="success" (click)="connect(device.id)" shape="round">
         Connect
       </ion-button>
-    </ion-item>
+    </ion-item>    
   </ion-list>
 </ion-content>

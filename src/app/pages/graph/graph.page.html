@@ -1,27 +1,57 @@
 <ion-header>
   <ion-toolbar>
     <div class='toolbar'>
-    <ion-title>Graph</ion-title>    
-    <ion-icon name="play-circle-outline" (click)='onStart()'></ion-icon>
-    <ion-icon name="stop-circle-outline" (click)='onStop()'></ion-icon>
-    <ion-icon name="information-circle-outline"></ion-icon>
-    <ion-icon *ngIf="state == 'connected'"  src="/assets/bluetooth_connected-24px.svg"></ion-icon>
-    <ion-icon *ngIf="state == 'disconnected'"  src="/assets/bluetooth-24px.svg"></ion-icon>
-    <ion-icon *ngIf="state == 'scannning'"  src="/assets/bluetooth_scanning-24px.svg"></ion-icon>
-    <ion-icon *ngIf="state == 'disabled'"  src="/assets/bluetooth_disabled-24px.svg"></ion-icon>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Graph</ion-title>
+    <ion-icon name="refresh-circle-outline"   (click)='onRefresh()'></ion-icon>
+    <ion-icon name="play-circle-outline"      (click)='onStart()'></ion-icon>
+    <ion-icon name="stop-circle-outline"      (click)='onStop()'></ion-icon>
+    <ion-icon *ngIf="status == 'connected'"   (click)='disconnect()'            src="/assets/bluetooth_connected-24px.svg"></ion-icon>
+    <ion-icon *ngIf="status == 'disconnected'"(click)='connect()'               src="/assets/bluetooth-24px.svg"></ion-icon>
+    <ion-icon *ngIf="status == 'scanning'"                                      src="/assets/bluetooth_scanning-24px.svg"></ion-icon>
+    <ion-icon *ngIf="status == 'disabled'"    (click)='onBluetoothDisabled()'   src="/assets/bluetooth_disabled-24px.svg"></ion-icon>
     </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class='chart'>
-    <canvas baseChart 
-    [datasets]="chartData" 
-    [labels]="chartLabels" 
-    [options]="chartOptions" 
-    [colors]="chartColors"
-    [legend]="showLegend" 
-    [chartType]="chartType">
+    <canvas baseChart [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions" [colors]="chartColors"
+      [legend]="showLegend" [chartType]="chartType">
     </canvas>
-  </div>  
+  </div>
+  <ion-card>
+    <ion-list>
+      <ion-item>
+        <ion-select interface="popover" placeholder="Select Service">
+          <ion-select-option *ngFor="let service of device.services" value="service">{{service}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-select interface="popover" placeholder="Select Characteristic">
+          <ion-select-option *ngFor="let each of device.characteristics" value="each.characteristic">
+            {{each.characteristic}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-item>
+      <ion-label>Sampling Freq [Hz]</ion-label>
+      <ion-input type="number" [(ngModel)]="samplingFreqInput" placeholder="Hz"></ion-input>
+      <ion-label>Max Time [s]</ion-label>
+      <ion-input type="number" [(ngModel)]="xAxisMaxInput" placeholder="s"></ion-input>
+    </ion-item>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      Data rate [characteristics/second]
+    </ion-card-header>
+    <h1 class="centered">{{dataRate}}</h1>
+  </ion-card>
 </ion-content>
+
+
+

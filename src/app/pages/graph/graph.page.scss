@@ -15,3 +15,15 @@ ion-icon:active{
 .chart{
     padding:10px;
 }
+.centered {
+    text-align: center;
+}
+
+ion-select {
+    max-width: 100%;  
+}
+
+ion-select-option {
+    width: unset !important;
+    max-width: 100% !important;
+    }

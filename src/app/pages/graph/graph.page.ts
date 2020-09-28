@@ -1,7 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ChartDataSets, ChartOptions, ChartPoint } from 'chart.js';
 import { BaseChartDirective, Color } from 'ng2-charts';
+import { BleDevice } from 'src/app/models/BleDevice';
 import { LinearSpace } from 'src/app/models/LinearSpace';
+import { BleService } from 'src/app/services/ble.service';
 
 @Component({
   selector: 'app-graph',
@@ -10,21 +12,34 @@ import { LinearSpace } from 'src/app/models/LinearSpace';
 })
 export class GraphPage implements OnInit {
 
-  private state: string = "disabled"
+  private started: boolean = false;
+  
+  private counter: number = 0;
+  private dataRate: number = 0;
+  private samplingFreqInput = 100;
+  private xAxisMaxInput = 5;
+  private SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+  private CHARACTERISTIC_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+
+  private device: BleDevice;
+  private status: string = "disabled"
+
+/* Intervals */
+  intervals: number[] = [];
 
 /* Signal properties */
-  private samplingFreq: number = 1000;
+  private samplingFreq: number;
   
 /* Axis properties */
   private xAxisMin: number = 0;
-  private xAxisMax: number = 10;
+  private xAxisMax: number = this.xAxisMaxInput;
   private yAxisMin: number = -5;
   private yAxisMax: number = 5;
   private time: LinearSpace;
 
  /* Plotting properties */ 
   private transitionTime = 0.5;
-  private updateTime = 0.1;
+  private updateTime = 0.2;
 
 /* Line properties */
   private lineWitdh = 2;
@@ -77,8 +92,17 @@ export class GraphPage implements OnInit {
 
   @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
 
-  constructor() { 
-    this.time = new LinearSpace(this.xAxisMin, 1 / this.samplingFreq, this.xAxisMax*this.samplingFreq);
+  constructor(private bleSrv: BleService, private ngZone: NgZone) { 
+    this.refresh();
+    this.device = this.bleSrv.getSelectedDevice();
+    this.bleSrv.getObservableStatus().subscribe((status) => {
+      this.status = status;
+    })    
+  }
+
+  ionViewWillEnter() {
+    this.device = this.bleSrv.getSelectedDevice();
+    this.bleSrv.UpdateStatus();
   }
 
   ngOnInit() {
@@ -103,25 +127,96 @@ export class GraphPage implements OnInit {
         this.chartData[this.iNew].data.shift();
       this.lastTime = 0; 
       this.swapIndex();      
-    }   
+    }
+    
+    this.counter++;
   }
 
-
-  private interval;
-
   private onStart() {
-    this.interval = setInterval(() => {
+    if (!this.started) {
+      this.started = true;
+      let interval: number = 0;
+    /*
+      interval = window.setInterval(() => {
       for (let i = 0; i < (this.samplingFreq*this.updateTime); i++) {
-        let t:number = this.time.getNext();
-        let point: ChartPoint = {x:t,y:Math.sin(2 * Math.PI * 2 * t)};
+        let t: number = this.time.getNext();
+        let y: number = Math.sin(2 * Math.PI * 2 * t);
+        let point: ChartPoint = {x:t,y:y};
         this.addNewPoint(point);
       }
       this.chart.update();
          
-    },1000*this.updateTime);
+    }, 1000 * this.updateTime);    
+    this.intervals.push(interval);
+    */
+
+    /* Update chart view */
+    interval = window.setInterval(() => {
+      this.chart.update();
+    }, 1000 * this.updateTime);
+    this.intervals.push(interval);
+
+    /* Calculate data rate */
+    interval = window.setInterval(() => {
+      this.dataRate = this.counter;
+      this.counter = 0;
+    }, 1000);
+    this.intervals.push(interval);
+
+    this.bleSrv.startNotification(this.SERVICE_UUID,this.CHARACTERISTIC_UUID,this.onDataChange).subscribe(
+      (data) => this.onDataChange(data),
+      () => alert('Unexpected Error: Failed to subscribe for data changes'));
+    }
   }
 
   private onStop() {
-    clearInterval(this.interval);
+    this.started = false;
+    for (let i = 0; i < this.intervals.length;i++)
+      clearInterval(this.intervals[i]);
+    this.bleSrv.stopNotification(this.SERVICE_UUID, this.CHARACTERISTIC_UUID);
+  }
+
+  private disconnect() {
+    console.log("disconnecting");
+    this.onStop();
+    this.bleSrv.disconnect(this.device.id);
+  }
+
+  private connect() {
+    this.bleSrv.connect(this.device.id);
+  }
+
+  onDataChange(data) {
+    let dat = new Uint32Array(data[0]);
+    console.log(dat.toString());
+    //this.ngZone.run(() => {
+      let t: number = this.time.getNext();
+      let y: number = dat[0];
+      let point: ChartPoint = {x:t,y:y};
+    this.addNewPoint(point);
+    //}); 
+  }
+
+  onBluetoothDisabled() {
+    alert("Enable Bluetooth")
+  }
+
+  refresh() {
+    this.samplingFreq = this.samplingFreqInput;
+    this.xAxisMax = this.xAxisMaxInput;
+    this.time = new LinearSpace(this.xAxisMin, 1 / this.samplingFreq, this.xAxisMax * this.samplingFreq);
+    this.chartOptions.scales.xAxes[0].ticks.max = this.xAxisMaxInput;
+    
+  }
+
+  onRefresh() {
+    if (this.samplingFreqInput > 1 && this.samplingFreqInput <= 500 && this.xAxisMaxInput >= 1 && this.xAxisMaxInput <= 10) {
+      this.refresh();
+      this.chart.ngOnInit();
+    } else {
+      alert("Invalid Inputs \n Sampling Freq: [1-500] \n Max Time: [1-30]")
+    }
+    this.device = this.bleSrv.getSelectedDevice();
+    this.bleSrv.UpdateStatus();
   }
 }
