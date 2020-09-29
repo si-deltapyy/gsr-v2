@@ -11,6 +11,7 @@ import { BleService } from 'src/app/services/ble.service';
 export class BluetoothPage implements OnInit {
   public devices = {};
   private status: string = "disabled";
+
   constructor(private bleSrv: BleService, private router: Router,private appComponent: AppComponent) {
     this.devices = this.bleSrv.getObservableList();
     this.bleSrv.getObservableStatus().subscribe((status) => {
@@ -23,7 +24,11 @@ export class BluetoothPage implements OnInit {
   }
 
   scan() {
-    this.bleSrv.scan(10);
+    this.bleSrv.waitIsEnabled().then(
+      ()=>{this.bleSrv.scan(10);},
+      ()=>{this.onBluetoothDisabled()}
+    );
+    
   }
 
   connect(id: string) {
@@ -34,6 +39,9 @@ export class BluetoothPage implements OnInit {
   }
 
   onBluetoothDisabled() {
-    alert("Enable Bluetooth");
+    this.bleSrv.alert("Bluetooth Disabled", "Please enable the Bluetooth and Location");
   }
+
+  
+
 }

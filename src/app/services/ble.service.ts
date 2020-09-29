@@ -1,7 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { BLE } from '@ionic-native/ble/ngx';
-import { ToastController } from '@ionic/angular';
-import { monkeyPatchChartJsLegend, ThemeService } from 'ng2-charts';
+import { AlertController, ToastController } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { BleAdvertisingPacket } from '../models/BleAdvertisingPacket';
 import { BleDevice } from '../models/BleDevice';
@@ -17,7 +16,7 @@ export class BleService {
   private listSubject: BehaviorSubject<BleAdvertisingPacket[]>;
   public readonly list: Observable<BleAdvertisingPacket[]>;
 
-  constructor(private ble: BLE, private toastCtrl: ToastController,private ngZone: NgZone) { 
+  constructor(private ble: BLE, private toastCtrl: ToastController,private ngZone: NgZone, private alertCtrl: AlertController) { 
     this.selectedDevice = this.getMockDevice();
 
     this.listSubject = new BehaviorSubject <BleAdvertisingPacket[]>([]);
@@ -152,7 +151,7 @@ export class BleService {
     this.onChangeDataCallback = callback;
     this.ble.startNotification(this.selectedDevice.id, serviceUUID, characteristicUUID).subscribe(
       (data) => { this.onChangeData(data) },
-      () => alert('Unexpected Error: Failed to subscribe for data changes'));
+      () => this.alert('Unexpected Error','Failed to subscribe for data changes'));
   }
   */
 /* BUG END */
@@ -165,10 +164,25 @@ export class BleService {
 
   stopNotification(serviceUUID:string, characteristicUUID:string) {
     this.ble.stopNotification(this.selectedDevice.id, serviceUUID, characteristicUUID).then(
-      () => alert('stopNotification: OK'),
-      () => alert('stopNotification: FAIL')
+      () => this.alert('Notification stop','OK'),
+      () => this.alert('Notification stop','FAIL')
     )   
   }
+
+  public async alert(title: string,msg: string){
+    const info = {
+      header: title,      
+      message: "<br>"+msg,
+      buttons: ["Ok"]
+    };
+    const alert = await this.alertCtrl.create(info);
+    alert.present();    
+  }
+
+  waitIsEnabled() {
+    return this.ble.isEnabled();
+  }
+
 }
 
 

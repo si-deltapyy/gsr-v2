@@ -170,7 +170,7 @@ export class GraphPage implements OnInit {
       else {
         this.bleSrv.startNotification(this.selectedService, this.selectedCharacteristic, this.onDataChange).subscribe(
           (data) => this.onDataChange(data),
-          () => alert('Unexpected Error: Failed to subscribe to this characteristic'));
+          () => this.bleSrv.alert('Unexpected Error', 'Failed to subscribe to this characteristic'));
       }
     }
   }
@@ -204,7 +204,7 @@ export class GraphPage implements OnInit {
   }
 
   onBluetoothDisabled() {
-    alert("Enable Bluetooth")
+    this.bleSrv.alert("Bluetooth Disabled", "Please enable the Bluetooth and Location");
   }
 
   refresh() {
