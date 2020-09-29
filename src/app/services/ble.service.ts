@@ -129,9 +129,9 @@ export class BleService {
     mock.id = "5f:a4:33:00:ef:b1";
     mock.services = ["Serv 1", "Serv 2", "Serv 3"];
     mock.characteristics = [
-      { service: "Serv 1", characteristic: "Char 1", properties: ["indicate"], descriptors: [{"key1":"value1"}] },
-      { service: "Serv 2", characteristic: "Char 2", properties: ["notification"], descriptors: [{"key2":"value2"}] },
-      { service: "Serv 2", characteristic: "Char 3", properties: ["notification"], descriptors: [{"key3":"value3"}] }
+      { service: "Serv 1", characteristic: "Serv 1: Char 1", properties: ["indicate"], descriptors: [{"key1":"value1"}] },
+      { service: "Serv 2", characteristic: "Serv 2: Char 1", properties: ["notification"], descriptors: [{"key2":"value2"}] },
+      { service: "Serv 2", characteristic: "Serv 2: Char 2", properties: ["notification"], descriptors: [{"key3":"value3"}] }
     ]
     return mock;
   }

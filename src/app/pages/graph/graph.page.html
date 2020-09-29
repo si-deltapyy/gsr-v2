@@ -25,13 +25,13 @@
   <ion-card>
     <ion-list>
       <ion-item>
-        <ion-select interface="popover" placeholder="Select Service">
-          <ion-select-option *ngFor="let service of device.services" value="service">{{service}}</ion-select-option>
+        <ion-select interface="popover" [(ngModel)]="selectedService" placeholder="Select Service">
+          <ion-select-option *ngFor="let service of device.services" [value]="service">{{service}}</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-select interface="popover" placeholder="Select Characteristic">
-          <ion-select-option *ngFor="let each of device.characteristics" value="each.characteristic">
+        <ion-select interface="popover" [(ngModel)]="selectedCharacteristic" placeholder="Select Characteristic">
+          <ion-select-option *ngFor="let each of (device.characteristics | arrayFilter:filterCharByService)" [value]="each.characteristic">
             {{each.characteristic}}</ion-select-option>
         </ion-select>
       </ion-item>

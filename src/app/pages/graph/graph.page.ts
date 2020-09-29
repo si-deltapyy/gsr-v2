@@ -1,6 +1,7 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ChartDataSets, ChartOptions, ChartPoint } from 'chart.js';
 import { BaseChartDirective, Color } from 'ng2-charts';
+import { BleCharacteristic } from 'src/app/models/BleCharacteristic';
 import { BleDevice } from 'src/app/models/BleDevice';
 import { LinearSpace } from 'src/app/models/LinearSpace';
 import { BleService } from 'src/app/services/ble.service';
@@ -13,13 +14,15 @@ import { BleService } from 'src/app/services/ble.service';
 export class GraphPage implements OnInit {
 
   private started: boolean = false;
+  private selectedService: string = "not-defined"
+  private selectedCharacteristic: string = "not-defined"
   
   private counter: number = 0;
   private dataRate: number = 0;
   private samplingFreqInput = 100;
   private xAxisMaxInput = 5;
-  private SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
-  private CHARACTERISTIC_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+  //private SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+  //private CHARACTERISTIC_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
 
   private device: BleDevice;
   private status: string = "disabled"
@@ -136,36 +139,39 @@ export class GraphPage implements OnInit {
     if (!this.started) {
       this.started = true;
       let interval: number = 0;
-    /*
+
+      /* Update chart view */
       interval = window.setInterval(() => {
-      for (let i = 0; i < (this.samplingFreq*this.updateTime); i++) {
-        let t: number = this.time.getNext();
-        let y: number = Math.sin(2 * Math.PI * 2 * t);
-        let point: ChartPoint = {x:t,y:y};
-        this.addNewPoint(point);
+        this.chart.update();
+      }, 1000 * this.updateTime);
+      this.intervals.push(interval);
+
+      /* Calculate data rate */
+      interval = window.setInterval(() => {
+        this.dataRate = this.counter;
+        this.counter = 0;
+      }, 1000);
+      this.intervals.push(interval);
+
+      if (this.selectedService === "not-defined") {
+        //generate test signal: sine wave
+        interval = window.setInterval(() => {
+          for (let i = 0; i < (this.samplingFreq * this.updateTime); i++) {
+            let t: number = this.time.getNext();
+            let y: number = Math.sin(2 * Math.PI * 2 * t);
+            let point: ChartPoint = { x: t, y: y };
+            this.addNewPoint(point);
+          }
+          this.chart.update();
+
+        }, 1000 * this.updateTime);
+        this.intervals.push(interval);
       }
-      this.chart.update();
-         
-    }, 1000 * this.updateTime);    
-    this.intervals.push(interval);
-    */
-
-    /* Update chart view */
-    interval = window.setInterval(() => {
-      this.chart.update();
-    }, 1000 * this.updateTime);
-    this.intervals.push(interval);
-
-    /* Calculate data rate */
-    interval = window.setInterval(() => {
-      this.dataRate = this.counter;
-      this.counter = 0;
-    }, 1000);
-    this.intervals.push(interval);
-
-    this.bleSrv.startNotification(this.SERVICE_UUID,this.CHARACTERISTIC_UUID,this.onDataChange).subscribe(
-      (data) => this.onDataChange(data),
-      () => alert('Unexpected Error: Failed to subscribe for data changes'));
+      else {
+        this.bleSrv.startNotification(this.selectedService, this.selectedCharacteristic, this.onDataChange).subscribe(
+          (data) => this.onDataChange(data),
+          () => alert('Unexpected Error: Failed to subscribe to this characteristic'));
+      }
     }
   }
 
@@ -173,7 +179,7 @@ export class GraphPage implements OnInit {
     this.started = false;
     for (let i = 0; i < this.intervals.length;i++)
       clearInterval(this.intervals[i]);
-    this.bleSrv.stopNotification(this.SERVICE_UUID, this.CHARACTERISTIC_UUID);
+    this.bleSrv.stopNotification(this.selectedService, this.selectedCharacteristic);
   }
 
   private disconnect() {
@@ -219,4 +225,13 @@ export class GraphPage implements OnInit {
     this.device = this.bleSrv.getSelectedDevice();
     this.bleSrv.UpdateStatus();
   }
+
+
+  /* The filter implementation is wrote in this way to not lose this reference. 
+   * this function is called in other context. For alternative solution search: bind(this)
+   */
+  private filterCharByService = (char: BleCharacteristic):boolean => {
+     return (char.service === this.selectedService);
+  }
+
 }
