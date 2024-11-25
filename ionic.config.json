@@ -1,7 +1,10 @@
 {
   "name": "ble_graph",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {
+      "enabled": false
+    },
+    "cordova": {}
   },
   "type": "angular"
 }
